@@ -1,20 +1,306 @@
-# ML Project Framework - Complete Documentation
+# ML Project Framework
 
-A professional, production-ready Python framework for machine learning projects that runs locally on your machine.
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub](https://img.shields.io/badge/GitHub-Aimecol/ml-black.svg)](https://github.com/Aimecol/ml)
 
-## 📋 Table of Contents
+A **professional, production-ready Python framework** for machine learning projects with complete data pipeline, feature engineering, model training, and evaluation capabilities.
 
-1. [Overview](#overview)
-2. [Features](#features)
-3. [Quick Start](#quick-start)
-4. [Project Structure](#project-structure)
-5. [Installation](#installation)
-6. [Configuration](#configuration)
-7. [Usage](#usage)
-8. [API Reference](#api-reference)
-9. [Best Practices](#best-practices)
-10. [Troubleshooting](#troubleshooting)
-11. [Contributing](#contributing)
+> **Built for ML engineers who want to start fast, scale easily, and maintain code quality.**
+
+## Table of Contents
+
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Usage Examples](#usage-examples)
+- [Configuration](#configuration)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Features
+
+### Web Interface (NEW!)
+
+- **Interactive Dashboard**: View experiment history and metrics at a glance
+- **Data Upload & Preview**: Upload files and preview data before training
+- **Visual Pipeline**: Configure training parameters with forms
+- **Model Training**: Train models directly from the browser
+- **Results Visualization**: Compare experiments and detailed reports
+- **REST API**: Access all features programmatically
+
+### Data Processing Pipeline
+
+- **Data Loading**: CSV, Excel, Parquet file support
+- **Data Cleaning**: Missing values, duplicates, outliers
+- **Preprocessing**: Stratified train/test/validation splitting
+- **Encoding**: Automatic categorical variable encoding
+
+### Feature Engineering
+
+- **Scaling**: StandardScaler, MinMaxScaler, RobustScaler
+- **Transformations**: Polynomial features, interactions, binning
+- **Selection**: Mutual information & F-test based selection
+- **Aggregations**: Group-based statistical features
+
+### Model Training
+
+- **Algorithms**: Random Forest, Gradient Boosting, Logistic Regression, Linear Regression, SVM
+- **Hyperparameter Management**: Configuration-driven approach
+- **Cross-Validation**: Built-in CV support
+- **Easy Extensibility**: Add custom algorithms seamlessly
+
+### Evaluation & Tracking
+
+- **Classification Metrics**: Accuracy, Precision, Recall, F1, ROC-AUC
+- **Regression Metrics**: R², MSE, RMSE, MAE, MAPE
+- **Visualization**: Confusion matrices, feature importance, ROC curves
+- **Experiment Tracking**: Automatic logging and results management
+
+## Quick Start
+
+### 1. Prerequisites
+
+```bash
+Python 3.8+ and pip
+```
+
+### 2. Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Aimecol/ml.git
+cd ml
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+pip install -e .
+```
+
+### 3. Run the Web Interface
+
+```bash
+python run_web.py
+```
+
+Then open your browser and navigate to `http://localhost:5000`
+
+The web interface provides:
+- Interactive dashboard for experiment tracking
+- Data upload and preview
+- Visual pipeline configuration
+- Real-time model training
+- Results visualization
+
+See [docs/WEBUI.md](docs/WEBUI.md) for complete web interface guide.
+
+### 4. Run Example Pipeline (Command Line)
+
+```bash
+python run_pipeline.py
+```
+
+This will:
+
+- Create sample data
+- Run complete ML pipeline
+- Train a Random Forest model
+- Generate evaluation metrics
+- Save results to `experiments/` and `models/`
+
+### 5. Try the Jupyter Notebook
+
+```bash
+jupyter notebook notebooks/01_getting_started.ipynb
+```
+
+## Project Structure
+
+```
+ml-project-framework/
+├── README.md                     # This file
+├── QUICKSTART.md                # Quick reference guide
+├── CONTRIBUTING.md              # Contribution guidelines
+├── CHANGELOG.md                 # Version history
+├── LICENSE                      # MIT License
+├── requirements.txt             # Python dependencies
+├── setup.py                     # Package installer
+├── run_pipeline.py              # Example end-to-end pipeline
+├── run_web.py                   # Web interface launcher
+│
+├── config/
+│   └── config.yaml             # Configuration file
+│
+├── docs/
+│   ├── project_requirements.md  # Project template
+│   └── WEBUI.md                # Web interface guide
+│
+├── web/                         # Web interface (NEW!)
+│   ├── __init__.py             # Flask app factory
+│   ├── routes.py               # API endpoints
+│   ├── templates/              # HTML templates
+│   │   ├── base.html
+│   │   ├── index.html
+│   │   ├── pipeline.html
+│   │   ├── results.html
+│   │   └── documentation.html
+│   └── static/                 # CSS and JavaScript
+│       ├── css/style.css
+│       └── js/main.js
+│
+├── src/                         # Main source code
+│   ├── data/                   # Data pipeline
+│   │   └── make_dataset.py
+│   ├── features/               # Feature engineering
+│   │   └── build_features.py
+│   ├── models/                 # Model training
+│   │   └── train_model.py
+│   ├── evaluation/             # Model evaluation
+│   │   └── evaluate_model.py
+│   └── utils/                  # Utilities
+│       ├── config.py
+│       └── logger.py
+│
+├── notebooks/
+│   └── 01_getting_started.ipynb  # Tutorial notebook
+│
+├── data/                        # Data directory
+│   ├── raw/                    # Raw data (excluded from git)
+│   └── processed/              # Processed data
+│
+├── models/
+│   └── final/                  # Trained models (excluded from git)
+│
+├── experiments/                 # Results and metrics
+│
+├── logs/                        # Execution logs
+│
+└── tests/                       # Unit tests
+```
+
+## Installation
+
+### From Repository
+
+```bash
+git clone https://github.com/Aimecol/ml.git
+cd ml
+pip install -e .
+```
+
+### From PyPI (coming soon)
+
+```bash
+pip install ml-project-framework
+```
+
+## Usage Examples
+
+### Basic ML Pipeline
+
+```python
+from src.data import DataProcessor
+from src.features import build_features
+from src.models import ModelTrainer
+from src.evaluation import evaluate_model
+
+# Load and prepare data
+processor = DataProcessor()
+df = processor.load_data('data/raw/data.csv')
+X_train, X_test, y_train, y_test = processor.split_data(df, target_col='target')
+
+# Engineer features
+X_train_eng, X_test_eng = build_features(X_train, X_test)
+
+# Train model
+trainer = ModelTrainer()
+trainer.train(X_train_eng, y_train, algorithm='random_forest')
+
+# Evaluate
+y_pred = trainer.predict(X_test_eng)
+metrics = evaluate_model(y_test, y_pred, problem_type='classification')
+
+# Save model
+trainer.save_model('models/my_model.pkl')
+```
+
+### Train Multiple Models
+
+```python
+algorithms = ['random_forest', 'gradient_boosting', 'logistic_regression']
+results = {}
+
+for algo in algorithms:
+    trainer = ModelTrainer()
+    trainer.train(X_train_eng, y_train, algorithm=algo)
+    y_pred = trainer.predict(X_test_eng)
+    metrics = evaluate_model(y_test, y_pred)
+    results[algo] = metrics['f1']
+
+best_algo = max(results, key=results.get)
+print(f"Best model: {best_algo}")
+```
+
+### Custom Feature Engineering
+
+```python
+from src.features import FeatureEngineer
+
+engineer = FeatureEngineer()
+
+# Polynomial features
+X_poly = engineer.create_polynomial_features(X, degree=2)
+
+# Interaction features
+X_inter = engineer.create_interaction_features(X, [('age', 'income')])
+
+# Feature selection
+top_features = engineer.select_top_features(X, y, n_features=10)
+```
+
+## Configuration
+
+Edit `config/config.yaml` to customize:
+
+```yaml
+project:
+  name: "my_project"
+
+problem:
+  type: "classification"
+  task: "binary_classification"
+
+model:
+  algorithm: "random_forest"
+  params:
+    n_estimators: 100
+    max_depth: 10
+
+data:
+  target_variable: "target"
+  test_split: 0.2
+
+features:
+  scaling:
+    method: "standard"
+  engineering:
+    polynomial_features:
+      enabled: false
+      degree: 2
+```
+
+See [QUICKSTART.md](QUICKSTART.md) for more examples.
 
 ## 🎯 Overview
 
@@ -524,39 +810,150 @@ pip install -e .
 - Use faster algorithm (Logistic Regression vs Random Forest)
 - Enable parallel processing
 
-## 🤝 Contributing
+## Documentation
 
-To improve the framework:
+### Guides
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
+- **[QUICKSTART.md](QUICKSTART.md)** - Quick reference for common tasks
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+- **[docs/project_requirements.md](docs/project_requirements.md)** - Project planning template
 
-## 📄 License
+### Examples
 
-MIT License - See LICENSE file for details
+- **[notebooks/01_getting_started.ipynb](notebooks/01_getting_started.ipynb)** - Interactive tutorial
+- **[run_pipeline.py](run_pipeline.py)** - End-to-end example script
+- **[config/config.yaml](config/config.yaml)** - Configuration example
 
-## 🙋 Support
+## Troubleshooting
 
-For issues, questions, or suggestions:
+### Common Issues
 
-1. Check the QUICKSTART.md guide
-2. Review example notebooks
-3. Check inline code documentation
-4. Review troubleshooting section
+**Import errors after installation**
 
-## 🎓 Learning Resources
+```bash
+# Make sure you installed in editable mode
+pip install -e .
+```
 
-- **Quick Start**: See `QUICKSTART.md`
-- **Interactive Tutorial**: Open `notebooks/01_getting_started.ipynb`
-- **Project Planning**: Use `docs/project_requirements.md`
-- **Configuration Guide**: Review inline comments in `config/config.yaml`
-- **API Documentation**: See docstrings in source files
+**Configuration not loading**
+
+- Check `config/config.yaml` exists
+- Verify YAML syntax is valid
+- Use absolute paths if needed
+
+**Model training is slow**
+
+- Start with a smaller dataset
+- Reduce number of features
+- Try simpler algorithms first (Logistic Regression)
+
+**Out of memory errors**
+
+- Reduce dataset size
+- Use data sampling
+- Process in batches
+
+See [QUICKSTART.md](QUICKSTART.md#troubleshooting) for more solutions.
+
+## Performance Tips
+
+1. **Start simple** - Get baseline working first
+2. **Profile code** - Find bottlenecks early
+3. **Use subsets** - Test on 10% of data initially
+4. **Parallelize** - Use `n_jobs=-1` in models
+5. **Monitor memory** - Watch RAM usage during training
+
+## Requirements
+
+- Python 3.8 or higher
+- pandas >= 1.3.0
+- scikit-learn >= 1.0.0
+- numpy >= 1.21.0
+- pyyaml >= 5.4.0
+
+Optional dependencies:
+
+- XGBoost: `pip install xgboost`
+- LightGBM: `pip install lightgbm`
+- MLflow: `pip install mlflow`
+
+See [requirements.txt](requirements.txt) for complete list.
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
+
+- Development setup
+- Code style guidelines
+- Testing requirements
+- Pull request process
+
+## Community
+
+- **Issues**: [GitHub Issues](https://github.com/Aimecol/ml/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Aimecol/ml/discussions)
+- **Email**: For security issues, email maintainers directly
+
+## License
+
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) (coming soon) for version history and updates.
+
+## Citation
+
+If you use this framework in your research, please cite:
+
+```bibtex
+@software{ml_framework_2026,
+  author = {Aimecol},
+  title = {ML Project Framework: Production-Ready ML Workflows},
+  url = {https://github.com/Aimecol/ml},
+  year = {2026}
+}
+```
+
+## Roadmap
+
+- [ ] Support for GPU acceleration
+- [ ] AutoML capabilities
+- [ ] Model serving/deployment utilities
+- [ ] Advanced visualization tools
+- [ ] Distributed training support
+- [ ] Time series specific features
+- [ ] NLP utilities
+- [ ] Computer vision utilities
+
+## FAQ
+
+**Q: Can I use this for production?**  
+A: Yes! The framework is designed for production use with proper error handling and logging.
+
+**Q: How do I add custom algorithms?**  
+A: Edit `src/models/train_model.py` and add your algorithm to the `get_model()` method.
+
+**Q: Can I use this for regression?**  
+A: Absolutely! Set `problem.type: "regression"` in `config.yaml`.
+
+**Q: How do I track experiments?**  
+A: Experiments are automatically logged to `experiments/` directory with timestamps.
+
+**Q: Is MLflow integration available?**  
+A: MLflow support is coming soon. For now, use the built-in experiment tracking.
+
+## Support & Questions
+
+- **Documentation**: Check [QUICKSTART.md](QUICKSTART.md) and guides
+- **Examples**: See `notebooks/` and `run_pipeline.py`
+- **Issues**: Open an issue on GitHub
+- **Discussions**: Use GitHub Discussions for questions
+
+## Acknowledgments
+
+Built for the ML community with ❤️
 
 ---
 
-**Built with ❤️ for the ML community**
-
-Happy coding! 🚀
+**Ready to build? Start with [Quick Start](#quick-start) and explore [examples](#usage-examples)!** 🚀
