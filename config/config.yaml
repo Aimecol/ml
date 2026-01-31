@@ -1,0 +1,94 @@
+project:
+  name: "example_ml_project"
+  description: "An example machine learning project using the ML Project Framework"
+  author: "Your Name"
+  version: "1.0.0"
+
+problem:
+  type: "classification" # Options: classification, regression, clustering, time_series, nlp, computer_vision
+  task: "binary_classification" # Options: binary_classification, multi_classification, regression, clustering
+
+data:
+  sources:
+    - name: "example_dataset"
+      path: "data/raw/example_data.csv"
+      format: "csv" # Options: csv, excel, parquet, json
+
+  preprocessing:
+    handle_missing: "drop" # Options: drop, mean, median, forward_fill, value
+    remove_duplicates: true
+    remove_outliers:
+      enabled: false
+      method: "iqr" # Options: iqr, zscore
+      columns: [] # Specify columns to check for outliers
+
+  target_variable: "target"
+  test_split: 0.2
+  validation_split: 0.1
+  random_state: 42
+
+features:
+  scaling:
+    enabled: true
+    method: "standard" # Options: standard, minmax, robust
+
+  engineering:
+    polynomial_features:
+      enabled: false
+      degree: 2
+
+    interaction_features:
+      enabled: false
+      pairs: [] # Example: [["feature1", "feature2"], ["feature3", "feature4"]]
+
+    binning:
+      enabled: false
+      columns: []
+      n_bins: 5
+      method: "equal_width" # Options: equal_width, equal_frequency
+
+model:
+  algorithm: "random_forest" # Options: random_forest, gradient_boosting, logistic_regression, linear_regression, xgboost, lightgbm
+
+  params:
+    # Random Forest / Gradient Boosting
+    n_estimators: 100
+    max_depth: 10
+    min_samples_split: 2
+    min_samples_leaf: 1
+    learning_rate: 0.1
+
+    # For specific algorithms
+    C: 1.0 # Logistic Regression, SVM
+    kernel: "rbf" # SVM
+
+training:
+  cross_validation:
+    enabled: false
+    n_folds: 5
+    scoring: null # Will use default for the problem type
+
+  early_stopping:
+    enabled: false
+    patience: 10
+
+evaluation:
+  metrics:
+    # Classification
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1"
+    - "roc_auc"
+
+    # Regression
+    # - "r2_score"
+    # - "mse"
+    # - "rmse"
+    # - "mae"
+
+output:
+  models_dir: "models/final"
+  experiments_dir: "experiments"
+  logs_dir: "logs"
+  visualizations_dir: "experiments/visualizations"
