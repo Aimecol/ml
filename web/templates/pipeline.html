@@ -1,319 +1,490 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Pipeline - ML Project Framework{%
+endblock %} {% block page_title %}ML Pipeline{% endblock %} 
 
-{% block title %}Pipeline - ML Project Framework{% endblock %}
-{% block page_title %}ML Pipeline{% endblock %}
+{% block extra_css %}
+<style>
+  .help-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: #0066cc;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: help;
+    margin-left: 5px;
+  }
+  .help-icon:hover {
+    background: #0052a3;
+  }
+  .form-description {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    font-style: italic;
+  }
+  .sample-data-btn {
+    background: #28a745;
+    padding: 10px 15px;
+    border-radius: 4px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  .sample-data-btn:hover {
+    background: #218838;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="pipeline-container">
-    <div class="pipeline-panel">
-        <h2>Step 1: Upload Data</h2>
-        <div class="form-group">
-            <label for="file-upload">Select Data File (CSV, Excel, Parquet):</label>
-            <div class="file-upload-area" id="drop-area">
-                <input type="file" id="file-upload" accept=".csv,.xlsx,.xls,.parquet" style="display:none">
-                <p>Drop file here or <a href="#" onclick="document.getElementById('file-upload').click(); return false;">click to select</a></p>
-                <p class="file-info" id="file-info"></p>
-            </div>
-        </div>
+  <div class="pipeline-panel">
+    <h2>Step 1: Upload Data
+      <span class="help-icon" onclick="showHelp('data_upload')">?</span>
+    </h2>
+    <button class="sample-data-btn" onclick="generateSampleData()">Generate Sample Data</button>
+    <div class="form-group">
+      <label for="file-upload">Select Data File (CSV, Excel, Parquet):</label>
+      <div class="form-description">Your data should have a 'target' column for the model to predict</div>
+      <div class="file-upload-area" id="drop-area">
+        <input
+          type="file"
+          id="file-upload"
+          accept=".csv,.xlsx,.xls,.parquet"
+          style="display: none"
+        />
+        <p>
+          Drop file here or
+          <a
+            href="#"
+            onclick="
+              document.getElementById('file-upload').click();
+              return false;
+            "
+            >click to select</a
+          >
+        </p>
+        <p class="file-info" id="file-info"></p>
+      </div>
     </div>
+  </div>
 
-    <div class="pipeline-panel">
-        <h2>Step 2: Data Preview</h2>
-        <div id="data-preview" class="data-preview">
-            <p class="placeholder">Upload a file to see preview</p>
-        </div>
+  <div class="pipeline-panel">
+    <h2>Step 2: Data Preview
+      <span class="help-icon" onclick="showHelp('data_preview')">?</span>
+    </h2>
+    <div id="data-preview" class="data-preview">
+      <p class="placeholder">Upload a file to see preview</p>
     </div>
+  </div>
 
-    <div class="pipeline-panel">
-        <h2>Step 3: Configure Training</h2>
-        <form id="training-form">
-            <div class="form-group">
-                <label for="problem-type">Problem Type:</label>
-                <select id="problem-type" name="problem_type">
-                    <option value="classification">Classification</option>
-                    <option value="regression">Regression</option>
-                </select>
-            </div>
+  <div class="pipeline-panel">
+    <h2>Step 3: Configure Training
+      <span class="help-icon" onclick="showHelp('configuration')">?</span>
+    </h2>
+    <form id="training-form">
+      <div class="form-group">
+        <label for="problem-type">
+          Problem Type:
+          <span class="help-icon" onclick="showHelp('problem_type')">?</span>
+        </label>
+        <select id="problem-type" name="problem_type">
+          <option value="classification">Classification (predict categories)</option>
+          <option value="regression">Regression (predict numbers)</option>
+        </select>
+        <div class="form-description">Are you predicting categories (yes/no) or continuous values (price)?</div>
+      </div>
 
-            <div class="form-group">
-                <label for="target-column">Target Column:</label>
-                <input type="text" id="target-column" name="target_column" placeholder="target" value="target">
-            </div>
+      <div class="form-group">
+        <label for="target-column">
+          Target Column:
+          <span class="help-icon" onclick="showHelp('target_column')">?</span>
+        </label>
+        <input
+          type="text"
+          id="target-column"
+          name="target_column"
+          placeholder="target"
+          value="target"
+        />
+        <div class="form-description">The column name you want to predict</div>
+      </div>
 
-            <div class="form-group">
-                <label for="algorithm">Algorithm:</label>
-                <select id="algorithm" name="algorithm">
-                    <option value="random_forest">Random Forest</option>
-                    <option value="gradient_boosting">Gradient Boosting</option>
-                    <option value="logistic_regression">Logistic Regression</option>
-                    <option value="svm">Support Vector Machine</option>
-                </select>
-            </div>
+      <div class="form-group">
+        <label for="algorithm">
+          Algorithm:
+          <span class="help-icon" onclick="showHelp('algorithm')">?</span>
+        </label>
+        <select id="algorithm" name="algorithm" onchange="updateAlgorithmHelp()">
+          <option value="random_forest">Random Forest (Recommended)</option>
+          <option value="gradient_boosting">Gradient Boosting (Most Accurate)</option>
+          <option value="logistic_regression">Logistic Regression (Fast)</option>
+          <option value="svm">Support Vector Machine (Complex)</option>
+        </select>
+        <div class="form-description" id="algorithm-desc">Good all-around choice for most problems</div>
+      </div>
 
-            <div class="form-group">
-                <label for="scaling-method">Feature Scaling:</label>
-                <select id="scaling-method" name="scaling_method">
-                    <option value="standard">Standard Scaler</option>
-                    <option value="minmax">MinMax Scaler</option>
-                    <option value="robust">Robust Scaler</option>
-                </select>
-            </div>
+      <div class="form-group">
+        <label for="scaling-method">
+          Feature Scaling:
+          <span class="help-icon" onclick="showHelp('scaling')">?</span>
+        </label>
+        <select id="scaling-method" name="scaling_method" onchange="updateScalingHelp()">
+          <option value="standard">Standard Scaler (Recommended)</option>
+          <option value="minmax">MinMax Scaler (0 to 1 range)</option>
+          <option value="robust">Robust Scaler (For outliers)</option>
+        </select>
+        <div class="form-description" id="scaling-desc">Normalizes feature values to help algorithms train better</div>
+      </div>
 
-            <div class="form-group">
-                <label for="missing-strategy">Missing Values:</label>
-                <select id="missing-strategy" name="missing_value_strategy">
-                    <option value="drop">Drop rows</option>
-                    <option value="mean">Fill with mean</option>
-                    <option value="median">Fill with median</option>
-                </select>
-            </div>
+      <div class="form-group">
+        <label for="missing-strategy">
+          Missing Values:</label>
 
-            <div class="form-group">
-                <label for="test-size">Test Set Size:</label>
-                <input type="number" id="test-size" name="test_size" min="0.1" max="0.5" step="0.1" value="0.2">
-            </div>
+        <select id="missing-strategy" name="missing_value_strategy">
+          <option value="drop">Drop rows</option>
+          <option value="mean">Fill with mean</option>
+          <option value="median">Fill with median</option>
+        </select>
+      </div>
 
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" id="remove-outliers" name="remove_outliers">
-                    Remove Outliers (IQR Method)
-                </label>
-            </div>
+      <div class="form-group">
+        <label for="test-size">Test Set Size:</label>
+        <input
+          type="number"
+          id="test-size"
+          name="test_size"
+          min="0.1"
+          max="0.5"
+          step="0.1"
+          value="0.2"
+        />
+      </div>
 
-            <div class="form-group">
-                <label for="model-params">Model Parameters (JSON):</label>
-                <textarea id="model-params" name="model_params" placeholder='{"n_estimators": 100}' rows="4"></textarea>
-            </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="remove-outliers" name="remove_outliers" />
+          Remove Outliers (IQR Method)
+        </label>
+      </div>
 
-            <button type="submit" class="btn btn-primary btn-lg" id="train-btn">Train Model</button>
-        </form>
+      <div class="form-group">
+        <label for="model-params">Model Parameters (JSON):</label>
+        <textarea
+          id="model-params"
+          name="model_params"
+          placeholder='{"n_estimators": 100}'
+          rows="4"
+        ></textarea>
+      </div>
 
-        <div id="training-status" class="training-status" style="display:none;">
-            <div class="spinner"></div>
-            <p id="status-message">Training in progress...</p>
-        </div>
+      <button type="submit" class="btn btn-primary btn-lg" id="train-btn">
+        Train Model
+      </button>
+    </form>
+
+    <div id="training-status" class="training-status" style="display: none">
+      <div class="spinner"></div>
+      <p id="status-message">Training in progress...</p>
     </div>
+  </div>
 
-    <div class="pipeline-panel">
-        <h2>Training Results</h2>
-        <div id="training-results" class="training-results">
-            <p class="placeholder">Results will appear here after training</p>
-        </div>
+  <div class="pipeline-panel">
+    <h2>Training Results</h2>
+    <div id="training-results" class="training-results">
+      <p class="placeholder">Results will appear here after training</p>
     </div>
+  </div>
 </div>
 
 <script>
-    let currentFilePath = null;
+  let currentFilePath = null;
+  let helpData = null;
 
-    // File upload handling
-    const dropArea = document.getElementById('drop-area');
-    const fileInput = document.getElementById('file-upload');
+  document.addEventListener('DOMContentLoaded', loadHelpData);
 
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-    });
+  function loadHelpData() {
+    fetch('/api/help')
+      .then(r => r.json())
+      .then(data => {
+        helpData = data.help;
+        updateAlgorithmHelp();
+        updateScalingHelp();
+      });
+  }
 
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
+  function updateAlgorithmHelp() {
+    const algo = document.getElementById('algorithm').value;
+    if (helpData && helpData.algorithms[algo]) {
+      document.getElementById('algorithm-desc').textContent = helpData.algorithms[algo].description;
     }
+  }
 
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false);
-    });
-
-    function highlight(e) {
-        dropArea.classList.add('highlight');
+  function updateScalingHelp() {
+    const scaling = document.getElementById('scaling-method').value;
+    if (helpData && helpData.scaling_methods[scaling]) {
+      document.getElementById('scaling-desc').textContent = helpData.scaling_methods[scaling].description;
     }
+  }
 
-    function unhighlight(e) {
-        dropArea.classList.remove('highlight');
-    }
+  function generateSampleData() {
+    const problemType = document.getElementById('problem-type').value;
+    showNotification('Generating sample data...', 'info');
 
-    dropArea.addEventListener('drop', handleDrop, false);
-
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        fileInput.files = files;
-        handleFiles(files);
-    }
-
-    fileInput.addEventListener('change', function() {
-        handleFiles(this.files);
-    });
-
-    function handleFiles(files) {
-        if (files.length > 0) {
-            const file = files[0];
-            uploadFile(file);
+    fetch('/api/generate-sample-data', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        problem_type: problemType,
+        n_samples: 500,
+        n_features: 10
+      })
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          currentFilePath = data.filepath;
+          document.getElementById('file-info').textContent = `✓ ${data.filename} (Sample data)`;
+          document.getElementById('data-preview').innerHTML = `
+            <div class="preview-info">
+              <p><strong>Shape:</strong> ${data.shape.rows} rows × ${data.shape.columns} columns</p>
+              <p class="success-message">Sample data loaded successfully! Now configure and train.</p>
+            </div>
+          `;
+          showNotification('Sample data generated! Ready to train.', 'success');
+        } else {
+          showNotification('Error: ' + data.error, 'danger');
         }
+      })
+      .catch(e => showNotification('Error: ' + e, 'danger'));
+  }
+
+  // File upload handling
+  const dropArea = document.getElementById("drop-area");
+  const fileInput = document.getElementById("file-upload");
+
+  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+    dropArea.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  ["dragenter", "dragover"].forEach((eventName) => {
+    dropArea.addEventListener(eventName, highlight, false);
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    dropArea.addEventListener(eventName, unhighlight, false);
+  });
+
+  function highlight(e) {
+    dropArea.classList.add("highlight");
+  }
+
+  function unhighlight(e) {
+    dropArea.classList.remove("highlight");
+  }
+
+  dropArea.addEventListener("drop", handleDrop, false);
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    fileInput.files = files;
+    handleFiles(files);
+  }
+
+  fileInput.addEventListener("change", function () {
+    handleFiles(this.files);
+  });
+
+  function handleFiles(files) {
+    if (files.length > 0) {
+      const file = files[0];
+      uploadFile(file);
     }
+  }
 
-    function uploadFile(file) {
-        const formData = new FormData();
-        formData.append('file', file);
+  function uploadFile(file) {
+    const formData = new FormData();
+    formData.append("file", file);
 
-        fetch('/api/upload', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                currentFilePath = data.filepath;
-                document.getElementById('file-info').textContent = `✓ ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
-                previewData();
-            } else {
-                alert('Upload failed: ' + data.error);
-            }
-        })
-        .catch(error => {
-            alert('Upload error: ' + error);
-            console.error('Upload error:', error);
-        });
-    }
+    showNotification('Uploading file...', 'info');
 
-    function previewData() {
-        if (!currentFilePath) {
-            alert('Please upload a file first');
-            return;
+    fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          currentFilePath = data.filepath;
+          document.getElementById("file-info").textContent =
+            `✓ ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+          previewData();
+          showNotification('File uploaded! Previewing...', 'success');
+        } else {
+          showNotification('Upload failed: ' + data.error, 'danger');
         }
+      })
+      .catch((error) => {
+        showNotification('Upload error: ' + error, 'danger');
+        console.error("Upload error:", error);
+      });
+  }
 
-        fetch('/api/preview-data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({filepath: currentFilePath})
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                displayPreview(data);
-            } else {
-                alert('Preview failed: ' + data.error);
-            }
-        })
-        .catch(error => {
-            alert('Preview error: ' + error);
-            console.error('Preview error:', error);
-        });
+  function previewData() {
+    if (!currentFilePath) {
+      showNotification('Please upload a file first', 'warning');
+      return;
     }
 
-    function displayPreview(data) {
-        const previewDiv = document.getElementById('data-preview');
-        let html = `<div class="preview-info">
-            <p><strong>Shape:</strong> ${data.shape.rows} rows × ${data.shape.columns} columns</p>
-            <p><strong>Columns:</strong> ${data.columns.join(', ')}</p>
+    fetch("/api/preview-data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filepath: currentFilePath }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          displayPreview(data);
+        } else {
+          showNotification('Preview failed: ' + data.error, 'danger');
+        }
+      })
+      .catch((error) => {
+        showNotification('Preview error: ' + error, 'danger');
+        console.error("Preview error:", error);
+      });
+  }
+
+  function displayPreview(data) {
+    const previewDiv = document.getElementById("data-preview");
+    let html = `<div class="preview-info">
+            <p><strong>Rows:</strong> ${data.shape.rows} | <strong>Columns:</strong> ${data.shape.columns}</p>
+            <p><strong>Columns:</strong> ${data.columns.join(", ")}</p>
         </div>`;
 
-        html += '<table class="data-table"><thead><tr>';
-        data.columns.forEach(col => {
-            html += `<th>${col}</th>`;
-        });
-        html += '</tr></thead><tbody>';
+    html += '<table class="data-table"><thead><tr>';
+    data.columns.forEach((col) => {
+      html += `<th>${col}</th>`;
+    });
+    html += "</tr></thead><tbody>";
 
-        data.preview.forEach(row => {
-            html += '<tr>';
-            data.columns.forEach(col => {
-                const value = row[col] !== null ? row[col] : '<em>null</em>';
-                html += `<td>${value}</td>`;
-            });
-            html += '</tr>';
-        });
+    data.preview.forEach((row) => {
+      html += "<tr>";
+      data.columns.forEach((col) => {
+        const value = row[col] !== null ? row[col] : "<em>null</em>";
+        html += `<td>${value}</td>`;
+      });
+      html += "</tr>";
+    });
 
-        html += '</tbody></table>';
-        previewDiv.innerHTML = html;
-    }
+    html += "</tbody></table>";
+    previewDiv.innerHTML = html;
+  }
 
-    // Training form submission
-    document.getElementById('training-form').addEventListener('submit', function(e) {
-        e.preventDefault();
+  // Training form submission
+  document
+    .getElementById("training-form")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
 
-        if (!currentFilePath) {
-            alert('Please upload a file first');
-            return;
+      if (!currentFilePath) {
+        showNotification('Please upload a file first', 'warning');
+        return;
+      }
+
+      // Show training status
+      document.getElementById("training-status").style.display = "block";
+      document.getElementById("training-results").innerHTML =
+        '<p class="placeholder">Training in progress...</p>';
+
+      // Prepare config
+      const config = {
+        filepath: currentFilePath,
+        config: {
+          problem_type: document.getElementById("problem-type").value,
+          target_column: document.getElementById("target-column").value,
+          algorithm: document.getElementById("algorithm").value,
+          scaling_method: document.getElementById("scaling-method").value,
+          missing_value_strategy:
+            document.getElementById("missing-strategy").value,
+          test_size: parseFloat(document.getElementById("test-size").value),
+          remove_outliers: document.getElementById("remove-outliers").checked,
+        },
+      };
+
+      // Parse model params
+      const paramsStr = document.getElementById("model-params").value.trim();
+      if (paramsStr) {
+        try {
+          config.config.model_params = JSON.parse(paramsStr);
+        } catch (e) {
+          alert("Invalid JSON in model parameters: " + e.message);
+          document.getElementById("training-status").style.display = "none";
+          return;
         }
+      }
 
-        // Show training status
-        document.getElementById('training-status').style.display = 'block';
-        document.getElementById('training-results').innerHTML = '<p class="placeholder">Training in progress...</p>';
-
-        // Prepare config
-        const config = {
-            filepath: currentFilePath,
-            config: {
-                problem_type: document.getElementById('problem-type').value,
-                target_column: document.getElementById('target-column').value,
-                algorithm: document.getElementById('algorithm').value,
-                scaling_method: document.getElementById('scaling-method').value,
-                missing_value_strategy: document.getElementById('missing-strategy').value,
-                test_size: parseFloat(document.getElementById('test-size').value),
-                remove_outliers: document.getElementById('remove-outliers').checked
-            }
-        };
-
-        // Parse model params
-        const paramsStr = document.getElementById('model-params').value.trim();
-        if (paramsStr) {
-            try {
-                config.config.model_params = JSON.parse(paramsStr);
-            } catch (e) {
-                alert('Invalid JSON in model parameters: ' + e.message);
-                document.getElementById('training-status').style.display = 'none';
-                return;
-            }
-        }
-
-        // Send training request
-        fetch('/api/train-model', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(config)
+      // Send training request
+      fetch("/api/train-model", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(config),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("training-status").style.display = "none";
+          if (data.success) {
+            displayResults(data);
+          } else {
+            alert("Training failed: " + data.error);
+            document.getElementById("training-results").innerHTML =
+              `<p class="error">Error: ${data.error}</p>`;
+          }
         })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('training-status').style.display = 'none';
-            if (data.success) {
-                displayResults(data);
-            } else {
-                alert('Training failed: ' + data.error);
-                document.getElementById('training-results').innerHTML = `<p class="error">Error: ${data.error}</p>`;
-            }
-        })
-        .catch(error => {
-            document.getElementById('training-status').style.display = 'none';
-            alert('Training error: ' + error);
-            console.error('Training error:', error);
-            document.getElementById('training-results').innerHTML = `<p class="error">Error: ${error}</p>`;
+        .catch((error) => {
+          document.getElementById("training-status").style.display = "none";
+          alert("Training error: " + error);
+          console.error("Training error:", error);
+          document.getElementById("training-results").innerHTML =
+            `<p class="error">Error: ${error}</p>`;
         });
     });
 
-    function displayResults(data) {
-        const resultsDiv = document.getElementById('training-results');
-        let html = `<div class="results-summary">
+  function displayResults(data) {
+    const resultsDiv = document.getElementById("training-results");
+    let html = `<div class="results-summary">
             <h3>Training Complete!</h3>
             <p><strong>Experiment:</strong> ${data.experiment_name}</p>
             <p><strong>Training Samples:</strong> ${data.training_samples}</p>
             <p><strong>Test Samples:</strong> ${data.test_samples}</p>
         </div>`;
 
-        html += '<div class="metrics-grid">';
-        for (const [key, value] of Object.entries(data.metrics)) {
-            if (typeof value === 'number') {
-                html += `<div class="metric"><strong>${key}:</strong> ${value.toFixed(4)}</div>`;
-            }
-        }
-        html += '</div>';
-
-        resultsDiv.innerHTML = html;
+    html += '<div class="metrics-grid">';
+    for (const [key, value] of Object.entries(data.metrics)) {
+      if (typeof value === "number") {
+        html += `<div class="metric"><strong>${key}:</strong> ${value.toFixed(4)}</div>`;
+      }
     }
+    html += "</div>";
+
+    resultsDiv.innerHTML = html;
+  }
 </script>
 {% endblock %}

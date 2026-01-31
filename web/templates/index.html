@@ -1,98 +1,111 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard - ML Project Framework{% endblock %}
-{% block page_title %}Dashboard{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Dashboard - ML Project Framework{%
+endblock %} {% block page_title %}Dashboard{% endblock %} {% block content %}
 <div class="dashboard-grid">
-    <div class="stat-card">
-        <h3>Total Experiments</h3>
-        <p class="stat-number" id="total-experiments">0</p>
-        <p class="stat-label">Completed</p>
-    </div>
-    
-    <div class="stat-card">
-        <h3>Last Accuracy</h3>
-        <p class="stat-number" id="last-accuracy">-</p>
-        <p class="stat-label">Classification</p>
-    </div>
-    
-    <div class="stat-card">
-        <h3>Framework Status</h3>
-        <p class="stat-number" id="status">Running</p>
-        <p class="stat-label">v1.0.0</p>
-    </div>
-    
-    <div class="stat-card">
-        <h3>Quick Start</h3>
-        <p class="stat-label">Get started now</p>
-        <a href="{{ url_for('main.pipeline') }}" class="btn btn-primary btn-sm">Open Pipeline</a>
-    </div>
+  <div class="stat-card">
+    <h3>Total Experiments</h3>
+    <p class="stat-number" id="total-experiments">0</p>
+    <p class="stat-label">Completed</p>
+  </div>
+
+  <div class="stat-card">
+    <h3>Last Accuracy</h3>
+    <p class="stat-number" id="last-accuracy">-</p>
+    <p class="stat-label">Classification</p>
+  </div>
+
+  <div class="stat-card">
+    <h3>Framework Status</h3>
+    <p class="stat-number" id="status">Running</p>
+    <p class="stat-label">v1.0.0</p>
+  </div>
+
+  <div class="stat-card">
+    <h3>Quick Start</h3>
+    <p class="stat-label">Get started now</p>
+    <a href="{{ url_for('main.pipeline') }}" class="btn btn-primary btn-sm"
+      >Open Pipeline</a
+    >
+  </div>
 </div>
 
 <div class="dashboard-section">
-    <h2>Recent Experiments</h2>
-    <div id="recent-experiments" class="experiment-list">
-        <p class="loading">Loading experiments...</p>
-    </div>
+  <h2>Recent Experiments</h2>
+  <div id="recent-experiments" class="experiment-list">
+    <p class="loading">Loading experiments...</p>
+  </div>
 </div>
 
 <div class="dashboard-section">
-    <h2>Getting Started</h2>
-    <div class="info-box">
-        <h3>Quick Steps:</h3>
-        <ol>
-            <li><strong>Upload Data:</strong> Go to Pipeline tab and upload your CSV or Excel file</li>
-            <li><strong>Configure:</strong> Set target column, algorithm, and parameters</li>
-            <li><strong>Train:</strong> Click "Train Model" to start training</li>
-            <li><strong>Review:</strong> Check results and metrics in the Results tab</li>
-        </ol>
-    </div>
+  <h2>Getting Started</h2>
+  <div class="info-box">
+    <h3>Quick Steps:</h3>
+    <ol>
+      <li>
+        <strong>Upload Data:</strong> Go to Pipeline tab and upload your CSV or
+        Excel file
+      </li>
+      <li>
+        <strong>Configure:</strong> Set target column, algorithm, and parameters
+      </li>
+      <li><strong>Train:</strong> Click "Train Model" to start training</li>
+      <li>
+        <strong>Review:</strong> Check results and metrics in the Results tab
+      </li>
+    </ol>
+  </div>
 </div>
 
 <script>
-    // Load dashboard data
-    document.addEventListener('DOMContentLoaded', function() {
-        loadDashboardData();
-        setInterval(loadDashboardData, 10000); // Refresh every 10 seconds
-    });
+  // Load dashboard data
+  document.addEventListener("DOMContentLoaded", function () {
+    loadDashboardData();
+    setInterval(loadDashboardData, 10000); // Refresh every 10 seconds
+  });
 
-    function loadDashboardData() {
-        fetch('/api/experiments')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.experiments) {
-                    document.getElementById('total-experiments').textContent = data.experiments.length;
-                    
-                    // Display recent experiments
-                    const recentDiv = document.getElementById('recent-experiments');
-                    if (data.experiments.length > 0) {
-                        let html = '<table class="experiment-table"><thead><tr><th>Experiment</th><th>Accuracy/R²</th><th>Date</th></tr></thead><tbody>';
-                        
-                        data.experiments.slice(0, 5).forEach(exp => {
-                            const accuracy = exp.metrics.accuracy || exp.metrics.r2_score || '-';
-                            const accuracyDisplay = typeof accuracy === 'number' ? accuracy.toFixed(4) : accuracy;
-                            html += `<tr><td>${exp.filename}</td><td>${accuracyDisplay}</td><td>${exp.timestamp}</td></tr>`;
-                        });
-                        
-                        html += '</tbody></table>';
-                        recentDiv.innerHTML = html;
-                        
-                        // Update last accuracy
-                        const lastExp = data.experiments[0];
-                        const lastAcc = lastExp.metrics.accuracy || lastExp.metrics.r2_score;
-                        if (lastAcc) {
-                            document.getElementById('last-accuracy').textContent = lastAcc.toFixed(4);
-                        }
-                    } else {
-                        recentDiv.innerHTML = '<p class="no-data">No experiments yet. Create one in the Pipeline tab!</p>';
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error loading dashboard:', error);
-                document.getElementById('recent-experiments').innerHTML = '<p class="error">Failed to load experiments</p>';
+  function loadDashboardData() {
+    fetch("/api/experiments")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success && data.experiments) {
+          document.getElementById("total-experiments").textContent =
+            data.experiments.length;
+
+          // Display recent experiments
+          const recentDiv = document.getElementById("recent-experiments");
+          if (data.experiments.length > 0) {
+            let html =
+              '<table class="experiment-table"><thead><tr><th>Experiment</th><th>Accuracy/R²</th><th>Date</th></tr></thead><tbody>';
+
+            data.experiments.slice(0, 5).forEach((exp) => {
+              const accuracy =
+                exp.metrics.accuracy || exp.metrics.r2_score || "-";
+              const accuracyDisplay =
+                typeof accuracy === "number" ? accuracy.toFixed(4) : accuracy;
+              html += `<tr><td>${exp.filename}</td><td>${accuracyDisplay}</td><td>${exp.timestamp}</td></tr>`;
             });
-    }
+
+            html += "</tbody></table>";
+            recentDiv.innerHTML = html;
+
+            // Update last accuracy
+            const lastExp = data.experiments[0];
+            const lastAcc =
+              lastExp.metrics.accuracy || lastExp.metrics.r2_score;
+            if (lastAcc) {
+              document.getElementById("last-accuracy").textContent =
+                lastAcc.toFixed(4);
+            }
+          } else {
+            recentDiv.innerHTML =
+              '<p class="no-data">No experiments yet. Create one in the Pipeline tab!</p>';
+          }
+        }
+      })
+      .catch((error) => {
+        console.error("Error loading dashboard:", error);
+        document.getElementById("recent-experiments").innerHTML =
+          '<p class="error">Failed to load experiments</p>';
+      });
+  }
 </script>
 {% endblock %}

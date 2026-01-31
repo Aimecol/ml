@@ -1,58 +1,125 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}ML Project Framework{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/style.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('main.static', filename='css/style.css') }}"
+    />
     {% block extra_css %}{% endblock %}
-</head>
-<body>
+  </head>
+  <body>
+    <!-- Help Modal System -->
+    <div id="help-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="help-title">Help</h2>
+          <button class="close-btn" onclick="closeHelpModal()">&times;</button>
+        </div>
+        <div id="help-body" class="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Info Tooltip -->
+    <div id="tooltip" class="tooltip" style="display: none"></div>
+
+    <!-- Welcome Modal (first-time users) -->
+    <div id="welcome-modal" class="modal">
+      <div class="modal-content welcome-content">
+        <div class="modal-header">
+          <h2>Welcome to ML Project Framework!</h2>
+          <button class="close-btn" onclick="closeWelcomeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>This is an interactive interface for machine learning without coding.</p>
+          <div class="welcome-steps">
+            <div class="welcome-step">
+              <div class="step-icon">1</div>
+              <h4>Upload Your Data</h4>
+              <p>CSV, Excel, or Parquet files</p>
+            </div>
+            <div class="welcome-step">
+              <div class="step-icon">2</div>
+              <h4>Configure Training</h4>
+              <p>Choose algorithm and parameters</p>
+            </div>
+            <div class="welcome-step">
+              <div class="step-icon">3</div>
+              <h4>Get Results</h4>
+              <p>View metrics and performance</p>
+            </div>
+          </div>
+          <div class="welcome-actions">
+            <button class="btn btn-primary" onclick="closeWelcomeModal()">Get Started</button>
+            <button class="btn btn-secondary" onclick="showSampleDataTutorial()">Try with Sample Data</button>
+            <label>
+              <input type="checkbox" id="dont-show-welcome" />
+              Don't show again
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="sidebar">
-        <div class="logo">
-            <h1>ML Framework</h1>
-        </div>
-        <nav class="nav-menu">
-            <a href="{{ url_for('main.dashboard') }}" class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
-                <span class="icon">📊</span> Dashboard
-            </a>
-            <a href="{{ url_for('main.pipeline') }}" class="nav-link {% if request.endpoint == 'main.pipeline' %}active{% endif %}">
-                <span class="icon">⚙️</span> Pipeline
-            </a>
-            <a href="{{ url_for('main.results') }}" class="nav-link {% if request.endpoint == 'main.results' %}active{% endif %}">
-                <span class="icon">📈</span> Results
-            </a>
-            <a href="{{ url_for('main.documentation') }}" class="nav-link {% if request.endpoint == 'main.documentation' %}active{% endif %}">
-                <span class="icon">📚</span> Documentation
-            </a>
-        </nav>
-        <div class="sidebar-footer">
-            <p>v1.0.0</p>
-        </div>
+      <div class="logo">
+        <h1>ML Framework</h1>
+        <p class="subtitle">For Everyone</p>
+      </div>
+      <nav class="nav-menu">
+        <a
+          href="{{ url_for('main.dashboard') }}"
+          class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}"
+        >
+          <span class="icon">📊</span> Dashboard
+        </a>
+        <a
+          href="{{ url_for('main.pipeline') }}"
+          class="nav-link {% if request.endpoint == 'main.pipeline' %}active{% endif %}"
+        >
+          <span class="icon">⚙️</span> Pipeline
+        </a>
+        <a
+          href="{{ url_for('main.results') }}"
+          class="nav-link {% if request.endpoint == 'main.results' %}active{% endif %}"
+        >
+          <span class="icon">📈</span> Results
+        </a>
+        <a
+          href="{{ url_for('main.documentation') }}"
+          class="nav-link {% if request.endpoint == 'main.documentation' %}active{% endif %}"
+        >
+          <span class="icon">📚</span> Docs
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn-help" onclick="showWelcomeModal()" title="Show help">?</button>
+        <p>v1.0.0</p>
+      </div>
     </div>
 
     <div class="main-content">
-        <header class="top-bar">
-            <h2>{% block page_title %}Dashboard{% endblock %}</h2>
-            <div class="header-info">
-                <span id="status-indicator" class="status-online">● Online</span>
-            </div>
-        </header>
-
-        <div class="container">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-info">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-
-            {% block content %}{% endblock %}
+      <header class="top-bar">
+        <div>
+          <h2>{% block page_title %}Dashboard{% endblock %}</h2>
+          <p id="page-subtitle" class="page-subtitle"></p>
         </div>
+        <div class="header-info">
+          <span id="status-indicator" class="status-online">● Online</span>
+        </div>
+      </header>
+
+      <div class="container">
+        {% with messages = get_flashed_messages() %} {% if messages %} {% for
+        message in messages %}
+        <div class="alert alert-info">{{ message }}</div>
+        {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
+      </div>
     </div>
 
     <script src="{{ url_for('main.static', filename='js/main.js') }}"></script>
     {% block extra_js %}{% endblock %}
-</body>
+  </body>
 </html>

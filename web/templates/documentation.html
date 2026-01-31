@@ -1,290 +1,365 @@
-{% extends "base.html" %}
-
-{% block title %}Documentation - ML Project Framework{% endblock %}
-{% block page_title %}Documentation{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Documentation - ML Project
+Framework{% endblock %} {% block page_title %}Documentation{% endblock %} {%
+block content %}
 <div class="docs-container">
-    <div class="docs-content">
-        <h2>Web Interface Guide</h2>
-        
-        <section>
-            <h3>Overview</h3>
-            <p>The ML Project Framework web interface provides an interactive way to:</p>
-            <ul>
-                <li>Upload and preview datasets</li>
-                <li>Configure machine learning pipelines</li>
-                <li>Train models with custom parameters</li>
-                <li>View and compare experiment results</li>
-            </ul>
-        </section>
+  <div class="docs-content">
+    <h2>Web Interface Guide</h2>
 
-        <section>
-            <h3>Getting Started</h3>
-            <ol>
-                <li><strong>Start the Web Server:</strong> <code>python run_web.py</code></li>
-                <li><strong>Open Browser:</strong> Navigate to <code>http://localhost:5000</code></li>
-                <li><strong>Upload Data:</strong> Go to Pipeline tab and upload your CSV, Excel, or Parquet file</li>
-                <li><strong>Configure:</strong> Set your training parameters</li>
-                <li><strong>Train:</strong> Click "Train Model" button</li>
-                <li><strong>Review:</strong> Check results in the Results tab</li>
-            </ol>
-        </section>
+    <section>
+      <h3>Overview</h3>
+      <p>
+        The ML Project Framework web interface provides an interactive way to:
+      </p>
+      <ul>
+        <li>Upload and preview datasets</li>
+        <li>Configure machine learning pipelines</li>
+        <li>Train models with custom parameters</li>
+        <li>View and compare experiment results</li>
+      </ul>
+    </section>
 
-        <section>
-            <h3>Features</h3>
-            
-            <h4>Dashboard</h4>
-            <p>View system overview including:</p>
-            <ul>
-                <li>Total experiments completed</li>
-                <li>Last training accuracy</li>
-                <li>Recent experiments list</li>
-                <li>Quick start guide</li>
-            </ul>
+    <section>
+      <h3>Getting Started</h3>
+      <ol>
+        <li>
+          <strong>Start the Web Server:</strong> <code>python run_web.py</code>
+        </li>
+        <li>
+          <strong>Open Browser:</strong> Navigate to
+          <code>http://localhost:5000</code>
+        </li>
+        <li>
+          <strong>Upload Data:</strong> Go to Pipeline tab and upload your CSV,
+          Excel, or Parquet file
+        </li>
+        <li><strong>Configure:</strong> Set your training parameters</li>
+        <li><strong>Train:</strong> Click "Train Model" button</li>
+        <li><strong>Review:</strong> Check results in the Results tab</li>
+      </ol>
+    </section>
 
-            <h4>Pipeline</h4>
-            <p>Complete training workflow in one place:</p>
-            <ul>
-                <li><strong>Upload Data:</strong> Drag and drop or click to upload</li>
-                <li><strong>Data Preview:</strong> See data shape, columns, and sample rows</li>
-                <li><strong>Configuration:</strong> Choose problem type, algorithm, and parameters</li>
-                <li><strong>Training:</strong> Train model with one click</li>
-                <li><strong>Results:</strong> View training metrics immediately</li>
-            </ul>
+    <section>
+      <h3>Features</h3>
 
-            <h4>Results</h4>
-            <p>Experiment tracking and analysis:</p>
-            <ul>
-                <li>Browse all completed experiments</li>
-                <li>View detailed metrics for each experiment</li>
-                <li>Compare confusion matrices and classification reports</li>
-                <li>Track model performance over time</li>
-            </ul>
-        </section>
+      <h4>Dashboard</h4>
+      <p>View system overview including:</p>
+      <ul>
+        <li>Total experiments completed</li>
+        <li>Last training accuracy</li>
+        <li>Recent experiments list</li>
+        <li>Quick start guide</li>
+      </ul>
 
-        <section>
-            <h3>Configuration Options</h3>
-            
-            <h4>Problem Type</h4>
-            <ul>
-                <li><strong>Classification:</strong> For categorical target variables</li>
-                <li><strong>Regression:</strong> For continuous target variables</li>
-            </ul>
+      <h4>Pipeline</h4>
+      <p>Complete training workflow in one place:</p>
+      <ul>
+        <li><strong>Upload Data:</strong> Drag and drop or click to upload</li>
+        <li>
+          <strong>Data Preview:</strong> See data shape, columns, and sample
+          rows
+        </li>
+        <li>
+          <strong>Configuration:</strong> Choose problem type, algorithm, and
+          parameters
+        </li>
+        <li><strong>Training:</strong> Train model with one click</li>
+        <li><strong>Results:</strong> View training metrics immediately</li>
+      </ul>
 
-            <h4>Algorithms</h4>
-            <ul>
-                <li><strong>Random Forest:</strong> Ensemble method, good general-purpose choice</li>
-                <li><strong>Gradient Boosting:</strong> Powerful boosting algorithm</li>
-                <li><strong>Logistic Regression:</strong> Linear model for classification</li>
-                <li><strong>Support Vector Machine:</strong> Effective for high-dimensional data</li>
-                <li><strong>Linear Regression:</strong> Linear model for regression</li>
-            </ul>
+      <h4>Results</h4>
+      <p>Experiment tracking and analysis:</p>
+      <ul>
+        <li>Browse all completed experiments</li>
+        <li>View detailed metrics for each experiment</li>
+        <li>Compare confusion matrices and classification reports</li>
+        <li>Track model performance over time</li>
+      </ul>
+    </section>
 
-            <h4>Feature Scaling</h4>
-            <ul>
-                <li><strong>Standard Scaler:</strong> Mean 0, std 1 (best for normal distributions)</li>
-                <li><strong>MinMax Scaler:</strong> Scale to [0, 1] range</li>
-                <li><strong>Robust Scaler:</strong> Uses median and IQR (resistant to outliers)</li>
-            </ul>
+    <section>
+      <h3>Configuration Options</h3>
 
-            <h4>Missing Values Strategy</h4>
-            <ul>
-                <li><strong>Drop:</strong> Remove rows with missing values</li>
-                <li><strong>Mean:</strong> Fill with column mean</li>
-                <li><strong>Median:</strong> Fill with column median</li>
-            </ul>
+      <h4>Problem Type</h4>
+      <ul>
+        <li>
+          <strong>Classification:</strong> For categorical target variables
+        </li>
+        <li><strong>Regression:</strong> For continuous target variables</li>
+      </ul>
 
-            <h4>Model Parameters</h4>
-            <p>Advanced users can provide custom hyperparameters as JSON:</p>
-            <pre><code>{"n_estimators": 200, "max_depth": 15, "min_samples_split": 5}</code></pre>
-        </section>
+      <h4>Algorithms</h4>
+      <ul>
+        <li>
+          <strong>Random Forest:</strong> Ensemble method, good general-purpose
+          choice
+        </li>
+        <li><strong>Gradient Boosting:</strong> Powerful boosting algorithm</li>
+        <li>
+          <strong>Logistic Regression:</strong> Linear model for classification
+        </li>
+        <li>
+          <strong>Support Vector Machine:</strong> Effective for
+          high-dimensional data
+        </li>
+        <li><strong>Linear Regression:</strong> Linear model for regression</li>
+      </ul>
 
-        <section>
-            <h3>Tips & Best Practices</h3>
-            
-            <h4>Data Preparation</h4>
-            <ul>
-                <li>Ensure your CSV/Excel has a column named "target" (or specify a different name)</li>
-                <li>Remove or handle missing values appropriately</li>
-                <li>Encode categorical features before upload (or use another preprocessing tool)</li>
-            </ul>
+      <h4>Feature Scaling</h4>
+      <ul>
+        <li>
+          <strong>Standard Scaler:</strong> Mean 0, std 1 (best for normal
+          distributions)
+        </li>
+        <li><strong>MinMax Scaler:</strong> Scale to [0, 1] range</li>
+        <li>
+          <strong>Robust Scaler:</strong> Uses median and IQR (resistant to
+          outliers)
+        </li>
+      </ul>
 
-            <h4>Model Training</h4>
-            <ul>
-                <li>Start with default parameters to establish a baseline</li>
-                <li>Use a reasonable test size (0.2 means 80-20 split)</li>
-                <li>For high-dimensional data, consider removing outliers</li>
-                <li>Experiment with different algorithms to find the best fit</li>
-            </ul>
+      <h4>Missing Values Strategy</h4>
+      <ul>
+        <li><strong>Drop:</strong> Remove rows with missing values</li>
+        <li><strong>Mean:</strong> Fill with column mean</li>
+        <li><strong>Median:</strong> Fill with column median</li>
+      </ul>
 
-            <h4>Results Interpretation</h4>
-            <ul>
-                <li><strong>Accuracy:</strong> Overall correct predictions (watch for imbalanced data)</li>
-                <li><strong>F1 Score:</strong> Harmonic mean of precision and recall</li>
-                <li><strong>ROC-AUC:</strong> Area under the ROC curve (0.5 is random, 1.0 is perfect)</li>
-                <li><strong>Confusion Matrix:</strong> Shows true positives, false positives, etc.</li>
-            </ul>
-        </section>
+      <h4>Model Parameters</h4>
+      <p>Advanced users can provide custom hyperparameters as JSON:</p>
+      <pre><code>{"n_estimators": 200, "max_depth": 15, "min_samples_split": 5}</code></pre>
+    </section>
 
-        <section>
-            <h3>Troubleshooting</h3>
-            
-            <h4>Upload Fails</h4>
-            <ul>
-                <li>Check file format (CSV, Excel, or Parquet only)</li>
-                <li>Ensure file size is under 16 MB</li>
-                <li>Verify file is not corrupted</li>
-            </ul>
+    <section>
+      <h3>Tips & Best Practices</h3>
 
-            <h4>Training Fails</h4>
-            <ul>
-                <li>Verify target column name matches your data</li>
-                <li>Check that target column exists in the data</li>
-                <li>Ensure JSON is valid if using custom model parameters</li>
-                <li>Check logs in <code>logs/</code> directory for details</li>
-            </ul>
+      <h4>Data Preparation</h4>
+      <ul>
+        <li>
+          Ensure your CSV/Excel has a column named "target" (or specify a
+          different name)
+        </li>
+        <li>Remove or handle missing values appropriately</li>
+        <li>
+          Encode categorical features before upload (or use another
+          preprocessing tool)
+        </li>
+      </ul>
 
-            <h4>Slow Training</h4>
-            <ul>
-                <li>Try reducing data size or number of features</li>
-                <li>Use simpler models (e.g., Logistic Regression)</li>
-                <li>Reduce number of model estimators</li>
-            </ul>
-        </section>
+      <h4>Model Training</h4>
+      <ul>
+        <li>Start with default parameters to establish a baseline</li>
+        <li>Use a reasonable test size (0.2 means 80-20 split)</li>
+        <li>For high-dimensional data, consider removing outliers</li>
+        <li>Experiment with different algorithms to find the best fit</li>
+      </ul>
 
-        <section>
-            <h3>API Endpoints</h3>
-            
-            <p>For advanced users, the web interface also provides REST API endpoints:</p>
-            
-            <h4>File Operations</h4>
-            <ul>
-                <li><code>POST /api/upload</code> - Upload dataset</li>
-                <li><code>POST /api/preview-data</code> - Preview dataset</li>
-            </ul>
+      <h4>Results Interpretation</h4>
+      <ul>
+        <li>
+          <strong>Accuracy:</strong> Overall correct predictions (watch for
+          imbalanced data)
+        </li>
+        <li>
+          <strong>F1 Score:</strong> Harmonic mean of precision and recall
+        </li>
+        <li>
+          <strong>ROC-AUC:</strong> Area under the ROC curve (0.5 is random, 1.0
+          is perfect)
+        </li>
+        <li>
+          <strong>Confusion Matrix:</strong> Shows true positives, false
+          positives, etc.
+        </li>
+      </ul>
+    </section>
 
-            <h4>Training & Models</h4>
-            <ul>
-                <li><code>POST /api/train-model</code> - Train a model</li>
-                <li><code>GET /api/algorithms</code> - Get available algorithms</li>
-            </ul>
+    <section>
+      <h3>Troubleshooting</h3>
 
-            <h4>Experiments</h4>
-            <ul>
-                <li><code>GET /api/experiments</code> - List all experiments</li>
-                <li><code>GET /api/experiment/{filename}</code> - Get experiment details</li>
-            </ul>
+      <h4>Upload Fails</h4>
+      <ul>
+        <li>Check file format (CSV, Excel, or Parquet only)</li>
+        <li>Ensure file size is under 16 MB</li>
+        <li>Verify file is not corrupted</li>
+      </ul>
 
-            <h4>Configuration</h4>
-            <ul>
-                <li><code>GET /api/config</code> - Get system configuration</li>
-                <li><code>GET /api/status</code> - Get system status</li>
-            </ul>
-        </section>
+      <h4>Training Fails</h4>
+      <ul>
+        <li>Verify target column name matches your data</li>
+        <li>Check that target column exists in the data</li>
+        <li>Ensure JSON is valid if using custom model parameters</li>
+        <li>Check logs in <code>logs/</code> directory for details</li>
+      </ul>
 
-        <section>
-            <h3>FAQ</h3>
-            
-            <h4>Q: Can I use my own data?</h4>
-            <p>A: Yes! Upload any CSV, Excel, or Parquet file. Make sure it has a target column.</p>
+      <h4>Slow Training</h4>
+      <ul>
+        <li>Try reducing data size or number of features</li>
+        <li>Use simpler models (e.g., Logistic Regression)</li>
+        <li>Reduce number of model estimators</li>
+      </ul>
+    </section>
 
-            <h4>Q: How do I know which algorithm to use?</h4>
-            <p>A: Random Forest is a good starting point for most problems. Try different algorithms and compare results.</p>
+    <section>
+      <h3>API Endpoints</h3>
 
-            <h4>Q: Can I download trained models?</h4>
-            <p>A: Currently, models are saved to the <code>models/</code> directory. Models are stored as pickle files.</p>
+      <p>
+        For advanced users, the web interface also provides REST API endpoints:
+      </p>
 
-            <h4>Q: What's the maximum file size?</h4>
-            <p>A: 16 MB for uploaded files. For larger datasets, consider splitting the data.</p>
+      <h4>File Operations</h4>
+      <ul>
+        <li><code>POST /api/upload</code> - Upload dataset</li>
+        <li><code>POST /api/preview-data</code> - Preview dataset</li>
+      </ul>
 
-            <h4>Q: Can I use this in production?</h4>
-            <p>A: This is a development interface. For production, deploy with proper security and use the Python API directly.</p>
-        </section>
+      <h4>Training & Models</h4>
+      <ul>
+        <li><code>POST /api/train-model</code> - Train a model</li>
+        <li><code>GET /api/algorithms</code> - Get available algorithms</li>
+      </ul>
 
-        <section>
-            <h3>Support & Resources</h3>
-            <ul>
-                <li><a href="https://github.com/Aimecol/ml" target="_blank">GitHub Repository</a></li>
-                <li><a href="https://github.com/Aimecol/ml/issues" target="_blank">Report Issues</a></li>
-                <li>Check <code>docs/</code> folder for detailed documentation</li>
-            </ul>
-        </section>
-    </div>
+      <h4>Experiments</h4>
+      <ul>
+        <li><code>GET /api/experiments</code> - List all experiments</li>
+        <li>
+          <code>GET /api/experiment/{filename}</code> - Get experiment details
+        </li>
+      </ul>
+
+      <h4>Configuration</h4>
+      <ul>
+        <li><code>GET /api/config</code> - Get system configuration</li>
+        <li><code>GET /api/status</code> - Get system status</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>FAQ</h3>
+
+      <h4>Q: Can I use my own data?</h4>
+      <p>
+        A: Yes! Upload any CSV, Excel, or Parquet file. Make sure it has a
+        target column.
+      </p>
+
+      <h4>Q: How do I know which algorithm to use?</h4>
+      <p>
+        A: Random Forest is a good starting point for most problems. Try
+        different algorithms and compare results.
+      </p>
+
+      <h4>Q: Can I download trained models?</h4>
+      <p>
+        A: Currently, models are saved to the <code>models/</code> directory.
+        Models are stored as pickle files.
+      </p>
+
+      <h4>Q: What's the maximum file size?</h4>
+      <p>
+        A: 16 MB for uploaded files. For larger datasets, consider splitting the
+        data.
+      </p>
+
+      <h4>Q: Can I use this in production?</h4>
+      <p>
+        A: This is a development interface. For production, deploy with proper
+        security and use the Python API directly.
+      </p>
+    </section>
+
+    <section>
+      <h3>Support & Resources</h3>
+      <ul>
+        <li>
+          <a href="https://github.com/Aimecol/ml" target="_blank"
+            >GitHub Repository</a
+          >
+        </li>
+        <li>
+          <a href="https://github.com/Aimecol/ml/issues" target="_blank"
+            >Report Issues</a
+          >
+        </li>
+        <li>Check <code>docs/</code> folder for detailed documentation</li>
+      </ul>
+    </section>
+  </div>
 </div>
 
 <style>
-    .docs-container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
+  .docs-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
 
-    .docs-content {
-        background: white;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+  .docs-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-    section {
-        margin-bottom: 40px;
-        padding-bottom: 40px;
-        border-bottom: 1px solid #eee;
-    }
+  section {
+    margin-bottom: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #eee;
+  }
 
-    section:last-child {
-        border-bottom: none;
-    }
+  section:last-child {
+    border-bottom: none;
+  }
 
-    h2 {
-        color: #2c3e50;
-        margin-bottom: 20px;
-    }
+  h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
 
-    h3 {
-        color: #34495e;
-        margin-top: 20px;
-        margin-bottom: 15px;
-    }
+  h3 {
+    color: #34495e;
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
 
-    h4 {
-        color: #555;
-        margin-top: 15px;
-        margin-bottom: 10px;
-    }
+  h4 {
+    color: #555;
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
 
-    ul, ol {
-        line-height: 1.8;
-        color: #555;
-    }
+  ul,
+  ol {
+    line-height: 1.8;
+    color: #555;
+  }
 
-    ul li, ol li {
-        margin-bottom: 8px;
-    }
+  ul li,
+  ol li {
+    margin-bottom: 8px;
+  }
 
-    code {
-        background: #f5f5f5;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-family: 'Courier New', monospace;
-        color: #d63384;
-    }
+  code {
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "Courier New", monospace;
+    color: #d63384;
+  }
 
-    pre {
-        background: #f5f5f5;
-        padding: 15px;
-        border-radius: 4px;
-        overflow-x: auto;
-        border-left: 4px solid #0066cc;
-    }
+  pre {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    border-left: 4px solid #0066cc;
+  }
 
-    a {
-        color: #0066cc;
-        text-decoration: none;
-    }
+  a {
+    color: #0066cc;
+    text-decoration: none;
+  }
 
-    a:hover {
-        text-decoration: underline;
-    }
+  a:hover {
+    text-decoration: underline;
+  }
 </style>
 {% endblock %}

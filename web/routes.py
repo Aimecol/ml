@@ -311,3 +311,187 @@ def get_algorithms():
         ]
     }
     return jsonify({'success': True, 'algorithms': algorithms})
+
+
+@api_bp.route('/generate-sample-data', methods=['POST'])
+def generate_sample_data():
+    """Generate sample dataset for learning."""
+    try:
+        import numpy as np
+        import pandas as pd
+        from sklearn.datasets import make_classification, make_regression
+        
+        data = request.get_json()
+        problem_type = data.get('problem_type', 'classification')
+        n_samples = data.get('n_samples', 500)
+        n_features = data.get('n_features', 10)
+        
+        logger.info(f"Generating {problem_type} sample data: {n_samples} samples, {n_features} features")
+        
+        if problem_type == 'classification':
+            X, y = make_classification(
+                n_samples=n_samples,
+                n_features=n_features,
+                n_informative=int(n_features * 0.7),
+                n_redundant=int(n_features * 0.2),
+                n_classes=2,
+                random_state=42
+            )
+        else:
+            X, y = make_regression(
+                n_samples=n_samples,
+                n_features=n_features,
+                n_informative=int(n_features * 0.7),
+                random_state=42
+            )
+        
+        df = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(n_features)])
+        df['target'] = y
+        
+        # Save sample data
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        filename = f"sample_{problem_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        filepath = os.path.join(upload_folder, filename)
+        df.to_csv(filepath, index=False)
+        
+        logger.info(f"Sample data generated: {filename}")
+        
+        return jsonify({
+            'success': True,
+            'filename': filename,
+            'filepath': filepath,
+            'shape': {'rows': len(df), 'columns': len(df.columns)},
+            'preview': df.head(5).to_dict('records')
+        })
+    
+    except Exception as e:
+        logger.error(f"Sample data generation error: {str(e)}\n{traceback.format_exc()}")
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/help', methods=['GET'])
+def get_help():
+    """Get interactive help content."""
+    try:
+        help_content = {
+            'algorithms': {
+                'random_forest': {
+                    'name': 'Random Forest',
+                    'description': 'Ensemble method combining multiple decision trees. Great for most problems.',
+                    'best_for': ['Classification', 'Regression', 'Feature importance'],
+                    'pros': ['Fast', 'Handles non-linear relationships', 'Robust to outliers'],
+                    'cons': ['Can overfit on small datasets', 'Uses more memory'],
+                    'tips': 'Start with default parameters. Increase n_estimators for better performance.',
+                    'example_params': {'n_estimators': 100, 'max_depth': 10}
+                },
+                'gradient_boosting': {
+                    'name': 'Gradient Boosting',
+                    'description': 'Sequentially builds trees to correct errors. Very powerful but slower.',
+                    'best_for': ['Complex patterns', 'High accuracy requirements'],
+                    'pros': ['Often best accuracy', 'Handles complex relationships'],
+                    'cons': ['Slower training', 'Risk of overfitting'],
+                    'tips': 'Use lower learning rate (0.01-0.1) for better generalization.',
+                    'example_params': {'n_estimators': 100, 'learning_rate': 0.1}
+                },
+                'logistic_regression': {
+                    'name': 'Logistic Regression',
+                    'description': 'Linear model for classification. Fast and interpretable.',
+                    'best_for': ['Fast predictions', 'Interpretability', 'Linear relationships'],
+                    'pros': ['Very fast', 'Easy to interpret', 'Good baseline'],
+                    'cons': ['Only for linear problems', 'Classification only'],
+                    'tips': 'Great as a baseline. Compare with other models.',
+                    'example_params': {'max_iter': 1000}
+                },
+                'svm': {
+                    'name': 'Support Vector Machine',
+                    'description': 'Powerful model for complex decision boundaries.',
+                    'best_for': ['High-dimensional data', 'Complex boundaries'],
+                    'pros': ['Works well in high dimensions', 'Flexible kernels'],
+                    'cons': ['Slower on large datasets', 'Needs scaling'],
+                    'tips': 'Always scale features before using SVM.',
+                    'example_params': {'kernel': 'rbf', 'C': 1.0}
+                },
+                'linear_regression': {
+                    'name': 'Linear Regression',
+                    'description': 'Fits a linear relationship between features and target.',
+                    'best_for': ['Linear relationships', 'Regression problems'],
+                    'pros': ['Interpretable', 'Fast', 'Good baseline'],
+                    'cons': ['Only linear patterns', 'Sensitive to outliers'],
+                    'tips': 'Use Robust Scaler if you have outliers.',
+                    'example_params': {}
+                }
+            },
+            'scaling_methods': {
+                'standard': {
+                    'name': 'Standard Scaler',
+                    'description': 'Mean=0, Standard Deviation=1. Good for normally distributed data.',
+                    'when_to_use': 'Most algorithms, normally distributed features',
+                    'formula': '(x - mean) / std_dev',
+                    'pro_tip': 'Default choice for most cases'
+                },
+                'minmax': {
+                    'name': 'MinMax Scaler',
+                    'description': 'Scales to [0, 1] range. Preserves zero-centered data.',
+                    'when_to_use': 'Neural networks, image data, bounded features',
+                    'formula': '(x - min) / (max - min)',
+                    'pro_tip': 'Good when you know the feature bounds'
+                },
+                'robust': {
+                    'name': 'Robust Scaler',
+                    'description': 'Uses median and IQR. Resistant to outliers.',
+                    'when_to_use': 'Data with outliers',
+                    'formula': '(x - median) / IQR',
+                    'pro_tip': 'Use when your data has extreme values'
+                }
+            },
+            'missing_value_strategies': {
+                'drop': {
+                    'name': 'Drop Rows',
+                    'description': 'Remove any row with missing values.',
+                    'when_to_use': 'When missing values are rare (<5%)',
+                    'pro_tip': 'Fastest but loses data',
+                    'impact': 'May lose valuable information'
+                },
+                'mean': {
+                    'name': 'Fill with Mean',
+                    'description': 'Replace missing with column average.',
+                    'when_to_use': 'When missing values are random',
+                    'pro_tip': 'Good for numeric features',
+                    'impact': 'Reduces variance slightly'
+                },
+                'median': {
+                    'name': 'Fill with Median',
+                    'description': 'Replace missing with column median.',
+                    'when_to_use': 'When you have outliers',
+                    'pro_tip': 'More robust than mean',
+                    'impact': 'Better with skewed distributions'
+                }
+            },
+            'general_tips': {
+                'data_preparation': [
+                    'Ensure target column exists and is named correctly',
+                    'Features should be numeric (encode text first)',
+                    'Check for missing values using data preview',
+                    'Look for outliers in your data'
+                ],
+                'model_selection': [
+                    'Start with Random Forest as a baseline',
+                    'Compare multiple algorithms',
+                    'Check if your problem is linear or non-linear',
+                    'Consider training time vs accuracy trade-off'
+                ],
+                'interpreting_results': [
+                    'Accuracy: Overall correctness (watch for class imbalance)',
+                    'F1 Score: Balance between precision and recall',
+                    'ROC-AUC: Model\'s ability to distinguish classes',
+                    'Confusion Matrix: See types of errors made'
+                ]
+            }
+        }
+        return jsonify({'success': True, 'help': help_content})
+    
+    except Exception as e:
+        logger.error(f"Help retrieval error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
