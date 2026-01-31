@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Results - ML Project Framework{% endblock %}
+{% block page_title %}Experiments & Results{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <div class="results-header">
+        <h2>All Experiments</h2>
+        <button class="btn btn-secondary" onclick="location.reload()">Refresh</button>
+    </div>
+
+    <div id="experiments-list" class="experiments-list">
+        <p class="loading">Loading experiments...</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        loadExperiments();
+    });
+
+    function loadExperiments() {
+        fetch('/api/experiments')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.experiments) {
+                    displayExperiments(data.experiments);
+                } else {
+                    document.getElementById('experiments-list').innerHTML = '<p class="error">Failed to load experiments</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading experiments:', error);
+                document.getElementById('experiments-list').innerHTML = '<p class="error">Error loading experiments: ' + error + '</p>';
+            });
+    }
+
+    function displayExperiments(experiments) {
+        const listDiv = document.getElementById('experiments-list');
+        
+        if (experiments.length === 0) {
+            listDiv.innerHTML = '<p class="no-data">No experiments yet. Create one in the Pipeline tab!</p>';
+            return;
+        }
+
+        let html = '<div class="experiment-cards">';
+        
+        experiments.forEach(exp => {
+            const metrics = exp.metrics;
+            const mainMetric = metrics.accuracy !== undefined ? 
+                `Accuracy: ${(metrics.accuracy * 100).toFixed(2)}%` :
+                metrics.r2_score !== undefined ?
+                `R² Score: ${(metrics.r2_score * 100).toFixed(2)}%` :
+                'View Details';
+
+            html += `
+                <div class="experiment-card">
+                    <div class="experiment-header">
+                        <h3>${exp.filename}</h3>
+                        <span class="timestamp">${exp.timestamp}</span>
+                    </div>
+                    <div class="experiment-metrics">
+                        <p><strong>${mainMetric}</strong></p>
+            `;
+
+            // Add other key metrics
+            if (metrics.f1_score !== undefined) {
+                html += `<p>F1 Score: ${(metrics.f1_score * 100).toFixed(2)}%</p>`;
+            }
+            if (metrics.mse !== undefined) {
+                html += `<p>MSE: ${(metrics.mse).toFixed(4)}</p>`;
+            }
+            if (metrics.rmse !== undefined) {
+                html += `<p>RMSE: ${(metrics.rmse).toFixed(4)}</p>`;
+            }
+
+            html += `
+                    </div>
+                    <div class="experiment-actions">
+                        <button class="btn btn-sm btn-primary" onclick="showDetails('${exp.filename}')">View Full Report</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        listDiv.innerHTML = html;
+    }
+
+    function showDetails(filename) {
+        fetch(`/api/experiment/${filename}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayFullReport(filename, data.data);
+                } else {
+                    alert('Failed to load experiment details');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading details:', error);
+                alert('Error loading details: ' + error);
+            });
+    }
+
+    function displayFullReport(filename, metrics) {
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>${filename}</h2>
+                    <button class="close-btn" onclick="this.parentElement.parentElement.parentElement.removeChild(this.parentElement.parentElement); return false;">×</button>
+                </div>
+                <div class="modal-body">
+                    <h3>Metrics</h3>
+                    <table class="metrics-table">
+                        <tbody>
+                            ${Object.entries(metrics)
+                                .filter(([key, val]) => typeof val === 'number')
+                                .map(([key, val]) => `
+                                    <tr>
+                                        <td>${key}</td>
+                                        <td><strong>${val.toFixed(6)}</strong></td>
+                                    </tr>
+                                `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    ${metrics.confusion_matrix ? `
+                        <h3>Confusion Matrix</h3>
+                        <pre>${JSON.stringify(metrics.confusion_matrix, null, 2)}</pre>
+                    ` : ''}
+                    
+                    ${metrics.classification_report ? `
+                        <h3>Classification Report</h3>
+                        <pre>${JSON.stringify(metrics.classification_report, null, 2)}</pre>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        modal.onclick = function(event) {
+            if (event.target === modal) {
+                document.body.removeChild(modal);
+            }
+        };
+    }
+</script>
+
+<style>
+    .modal {
+        display: block;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 800px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .close-btn {
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: #999;
+    }
+
+    .close-btn:hover {
+        color: #000;
+    }
+
+    .metrics-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    .metrics-table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .metrics-table tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .experiment-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
+
+    .experiment-card {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+    .experiment-card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .experiment-header {
+        margin-bottom: 15px;
+    }
+
+    .experiment-header h3 {
+        margin: 0 0 5px 0;
+        color: #333;
+        font-size: 16px;
+        word-break: break-all;
+    }
+
+    .timestamp {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .experiment-metrics {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
+
+    .experiment-metrics p {
+        margin: 8px 0;
+        font-size: 14px;
+    }
+
+    .experiment-actions {
+        display: flex;
+        gap: 10px;
+    }
+</style>
+{% endblock %}

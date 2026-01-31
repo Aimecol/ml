@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ML Project Framework{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <h1>ML Framework</h1>
+        </div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('main.dashboard') }}" class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
+                <span class="icon">📊</span> Dashboard
+            </a>
+            <a href="{{ url_for('main.pipeline') }}" class="nav-link {% if request.endpoint == 'main.pipeline' %}active{% endif %}">
+                <span class="icon">⚙️</span> Pipeline
+            </a>
+            <a href="{{ url_for('main.results') }}" class="nav-link {% if request.endpoint == 'main.results' %}active{% endif %}">
+                <span class="icon">📈</span> Results
+            </a>
+            <a href="{{ url_for('main.documentation') }}" class="nav-link {% if request.endpoint == 'main.documentation' %}active{% endif %}">
+                <span class="icon">📚</span> Documentation
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>v1.0.0</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header class="top-bar">
+            <h2>{% block page_title %}Dashboard{% endblock %}</h2>
+            <div class="header-info">
+                <span id="status-indicator" class="status-online">● Online</span>
+            </div>
+        </header>
+
+        <div class="container">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-info">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('main.static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
